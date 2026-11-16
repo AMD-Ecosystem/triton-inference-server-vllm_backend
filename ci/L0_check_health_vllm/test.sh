@@ -48,7 +48,9 @@ function enable_health_check {
     echo -e "}" >> models/vllm_opt/config.pbtxt
 }
 
-VLLM_INSTALL_PATH="/usr/local/lib/python3.12/dist-packages/vllm"
+# vLLM is installed for the Python that the vLLM job runs (python3 -> 3.14 on the
+# ROCm image), not the 3.12 that the server QA tests use.
+VLLM_INSTALL_PATH="$(python3 -c 'import sysconfig,os; print(os.path.join(sysconfig.get_paths()["purelib"], "vllm"))')"
 VLLM_V1_ENGINE_PATH="$VLLM_INSTALL_PATH/v1/engine"
 
 function mock_vllm_async_llm_engine {
